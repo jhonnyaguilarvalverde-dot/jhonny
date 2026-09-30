@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asistente de Notas · U.E. Candida Maria de Jesus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy: #16213E;
+    --navy-light: #24365C;
+    --cream: #F5F1E8;
+    --paper-line: #DED4C0;
+    --mustard: #E8A33D;
+    --mustard-dark: #C4831F;
+    --coral: #E85C4A;
+    --green: #4C9A66;
+    --ink: #20222A;
+    --ink-soft: #5B5F6B;
+    --white: #FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Inter',sans-serif;
+    color:var(--ink);
+    background:var(--navy);
+    height:100vh;
+    overflow:hidden;
+  }
+  .app{
+    display:flex;
+    height:100vh;
+  }
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar{
+    width:320px;
+    min-width:320px;
+    background:var(--navy);
+    color:var(--cream);
+    display:flex;
+    flex-direction:column;
+    padding:24px 20px;
+    overflow-y:auto;
+  }
+  .crest{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:22px;
+  }
+  .crest-mark{
+    width:42px;height:42px;
+    background:var(--mustard);
+    border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Poppins',sans-serif;
+    font-weight:800;
+    color:var(--navy);
+    font-size:15px;
+    flex-shrink:0;
+  }
+  .crest-text .school{
+    font-family:'Poppins',sans-serif;
+    font-weight:700;
+    font-size:14.5px;
+    line-height:1.25;
+  }
+  .crest-text .tagline{
+    font-size:11.5px;
+    color:#9AA5C4;
+    margin-top:1px;
+  }
+
+  .switcher{
+    margin-bottom:20px;
+  }
+  .switcher label{
+    display:block;
+    font-size:11px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:#8B95B8;
+    margin-bottom:6px;
+    font-weight:600;
+  }
+  .switcher select{
+    width:100%;
+    background:var(--navy-light);
+    color:var(--cream);
+    border:1px solid #3A4A70;
+    border-radius:8px;
+    padding:9px 10px;
+    font-family:'Inter',sans-serif;
+    font-size:13.5px;
+    font-weight:500;
+  }
+
+  .profile-card{
+    background:var(--navy-light);
+    border-radius:12px;
+    padding:16px;
+    margin-bottom:18px;
+    border:1px solid #33436B;
+  }
+  .profile-top{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    margin-bottom:14px;
+  }
+  .avatar{
+    width:46px;height:46px;
+    border-radius:50%;
+    background:var(--mustard);
+    color:var(--navy);
+    font-family:'Poppins',sans-serif;
+    font-weight:700;
+    font-size:15px;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .profile-name{font-family:'Poppins',sans-serif;font-weight:700;font-size:14.5px;}
+  .profile-grade{font-size:12px;color:#9AA5C4;margin-top:2px;}
+
+  .stat-row{display:flex;gap:10px;}
+  .stat-box{
+    flex:1;
+    background:rgba(255,255,255,.04);
+    border-radius:8px;
+    padding:10px 8px;
+    text-align:center;
+  }
+  .stat-num{
+    font-family:'Space Mono',monospace;
+    font-weight:700;
+    font-size:19px;
+  }
+  .stat-num.good{color:#7FD99E;}
+  .stat-num.warn{color:#F0B95E;}
+  .stat-label{font-size:10px;color:#8B95B8;margin-top:2px;letter-spacing:.03em;}
+
+  .subjects-title{
+    font-size:11px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:#8B95B8;
+    font-weight:600;
+    margin:6px 0 10px;
+  }
+  .subject-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:6px 0;
+    border-bottom:1px solid #2A3958;
+  }
+  .subject-row:last-child{border-bottom:none;}
+  .subject-name{
+    font-size:12.5px;
+    flex:1;
+    color:#D9DEEC;
+  }
+  .subject-bar-track{
+    width:52px;
+    height:5px;
+    background:#2A3958;
+    border-radius:4px;
+    overflow:hidden;
+  }
+  .subject-bar-fill{height:100%;border-radius:4px;}
+  .subject-note{
+    font-family:'Space Mono',monospace;
+    font-size:12px;
+    font-weight:700;
+    width:26px;
+    text-align:right;
+  }
+
+  /* ---------- CHAT PANEL ---------- */
+  .chat-panel{
+    flex:1;
+    background:var(--cream);
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+  }
+  .chat-header{
+    padding:18px 28px;
+    border-bottom:1px solid var(--paper-line);
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:var(--white);
+  }
+  .chat-header .dot{
+    width:9px;height:9px;border-radius:50%;background:var(--green);
+    box-shadow:0 0 0 3px rgba(76,154,102,.18);
+  }
+  .chat-header-text .h1{
+    font-family:'Poppins',sans-serif;
+    font-weight:700;
+    font-size:15.5px;
+  }
+  .chat-header-text .h2{
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-top:1px;
+  }
+
+  .messages{
+    flex:1;
+    overflow-y:auto;
+    padding:24px 28px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  .msg{
+    max-width:78%;
+    display:flex;
+    flex-direction:column;
+  }
+  .msg.bot{align-self:flex-start;}
+  .msg.user{align-self:flex-end;align-items:flex-end;}
+
+  .bubble{
+    padding:12px 15px;
+    border-radius:14px;
+    font-size:14px;
+    line-height:1.5;
+  }
+  .msg.bot .bubble{
+    background:var(--white);
+    border-left:3px solid var(--mustard);
+    border-radius:4px 14px 14px 14px;
+    color:var(--ink);
+  }
+  .msg.user .bubble{
+    background:var(--navy);
+    color:var(--cream);
+    border-radius:14px 4px 14px 14px;
+  }
+  .msg-time{
+    font-size:10.5px;
+    color:#A9A29A;
+    margin-top:4px;
+    padding:0 4px;
+  }
+
+  /* ficha / grade card - signature element */
+  .ficha{
+    margin-top:8px;
+    background:var(--white);
+    border-radius:10px;
+    border:1px solid var(--paper-line);
+    overflow:hidden;
+    position:relative;
+  }
+  .ficha-corner{
+    position:absolute;
+    top:0;right:0;
+    width:0;height:0;
+    border-style:solid;
+    border-width:0 22px 22px 0;
+  }
+  .ficha-body{padding:12px 14px 12px 14px;}
+  .ficha-subject{
+    font-family:'Poppins',sans-serif;
+    font-weight:700;
+    font-size:13.5px;
+    margin-bottom:2px;
+  }
+  .ficha-meta{font-size:11px;color:var(--ink-soft);margin-bottom:8px;}
+  .ficha-grade-row{display:flex;align-items:baseline;gap:8px;}
+  .ficha-grade{
+    font-family:'Space Mono',monospace;
+    font-weight:700;
+    font-size:26px;
+  }
+  .ficha-trend{font-size:12.5px;font-weight:600;}
+  .ficha-trend.up{color:var(--green);}
+  .ficha-trend.down{color:var(--coral);}
+  .ficha-trend.flat{color:var(--ink-soft);}
+
+  .mini-list{margin-top:6px;}
+  .mini-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:7px 0;
+    border-bottom:1px solid var(--paper-line);
+    font-size:13px;
+  }
+  .mini-item:last-child{border-bottom:none;}
+  .mini-item .mi-name{flex:1;color:var(--ink);}
+  .mini-item .mi-note{font-family:'Space Mono',monospace;font-weight:700;width:30px;text-align:right;}
+  .mini-item .mi-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+  .ticket{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    padding:9px 0;
+    border-bottom:1px dashed var(--paper-line);
+  }
+  .ticket:last-child{border-bottom:none;}
+  .ticket-date{
+    font-family:'Space Mono',monospace;
+    font-size:11.5px;
+    background:var(--cream);
+    border:1px solid var(--paper-line);
+    border-radius:6px;
+    padding:5px 7px;
+    text-align:center;
+    line-height:1.15;
+    min-width:52px;
+  }
+  .ticket-date .d{font-weight:700;font-size:14px;display:block;}
+  .ticket-info .t-subject{font-weight:600;font-size:13px;}
+  .ticket-info .t-topic{font-size:11.5px;color:var(--ink-soft);}
+
+  .task-item{
+    display:flex;
+    gap:9px;
+    align-items:flex-start;
+    padding:6px 0;
+    font-size:13px;
+  }
+  .task-check{
+    width:15px;height:15px;
+    border:2px solid var(--mustard-dark);
+    border-radius:4px;
+    margin-top:1px;
+    flex-shrink:0;
+  }
+
+  /* suggestions + input */
+  .chips-row{
+    padding:10px 28px 0;
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    background:var(--cream);
+  }
+  .chip{
+    background:var(--white);
+    border:1px solid var(--paper-line);
+    color:var(--navy);
+    font-size:12.5px;
+    font-weight:500;
+    padding:7px 13px;
+    border-radius:20px;
+    cursor:pointer;
+    transition:background .15s, transform .1s;
+    white-space:nowrap;
+  }
+  .chip:hover{background:var(--mustard);border-color:var(--mustard);color:var(--navy);}
+  .chip:active{transform:scale(.97);}
+
+  .input-row{
+    padding:16px 28px 20px;
+    display:flex;
+    gap:10px;
+    background:var(--cream);
+  }
+  .input-row input{
+    flex:1;
+    border:1px solid var(--paper-line);
+    background:var(--white);
+    border-radius:10px;
+    padding:12px 14px;
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    color:var(--ink);
+  }
+  .input-row input:focus{outline:2px solid var(--mustard);outline-offset:-1px;}
+  .send-btn{
+    background:var(--navy);
+    color:var(--cream);
+    border:none;
+    border-radius:10px;
+    padding:0 20px;
+    font-family:'Poppins',sans-serif;
+    font-weight:600;
+    font-size:13.5px;
+    cursor:pointer;
+  }
+  .send-btn:hover{background:var(--navy-light);}
+
+  /* scrollbars */
+  .messages::-webkit-scrollbar, .sidebar::-webkit-scrollbar{width:8px;}
+  .messages::-webkit-scrollbar-thumb, .sidebar::-webkit-scrollbar-thumb{background:#C9BFAE;border-radius:6px;}
+  .sidebar::-webkit-scrollbar-thumb{background:#3A4A70;}
+
+  @media (max-width:760px){
+    .app{flex-direction:column;}
+    .sidebar{width:100%;min-width:0;height:auto;max-height:38vh;}
+    .chat-panel{height:62vh;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="crest">
+      <div class="crest-mark">SI</div>
+      <div class="crest-text">
+        <div class="school">U.E. San Ignacio de Loyola</div>
+        <div class="tagline">Consulta de notas · Secundaria</div>
+      </div>
+    </div>
+
+    <div class="switcher">
+      <label>Estudiante</label>
+      <select id="studentSelect" onchange="switchStudent(this.value)">
+        <option value="ana">Ana Sofía Rojas — 3ro B</option>
+        <option value="diego">Diego Alejandro Vargas — 2do A</option>
+      </select>
+    </div>
+
+    <div class="profile-card">
+      <div class="profile-top">
+        <div class="avatar" id="avatarInit">AR</div>
+        <div>
+          <div class="profile-name" id="profileName">Ana Sofía Rojas</div>
+          <div class="profile-grade" id="profileGrade">3ro de Secundaria · Turno mañana</div>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-box">
+          <div class="stat-num good" id="avgStat">83.9</div>
+          <div class="stat-label">PROMEDIO</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num good" id="attStat">96%</div>
+          <div class="stat-label">ASISTENCIA</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="subjects-title">Materias</div>
+    <div id="subjectList"></div>
+  </div>
+
+  <!-- CHAT PANEL -->
+  <div class="chat-panel">
+    <div class="chat-header">
+      <div class="dot"></div>
+      <div class="chat-header-text">
+        <div class="h1">Asistente Virtual de Notas</div>
+        <div class="h2">Responde preguntas sobre calificaciones, exámenes y asistencia</div>
+      </div>
+    </div>
+
+    <div class="messages" id="messages"></div>
+
+    <div class="chips-row" id="chipsRow"></div>
+
+    <div class="input-row">
+      <input type="text" id="userInput" placeholder="Escribe tu pregunta, por ejemplo: ¿cuál es mi nota en Física?" onkeydown="if(event.key==='Enter')sendMessage()">
+      <button class="send-btn" onclick="sendMessage()">Enviar</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ---------------- DATA ---------------- */
+const students = {
+  ana: {
+    name: "Ana Sofía Rojas",
+    grade: "3ro de Secundaria · Turno mañana",
+    initials: "AR",
+    attendance: 96,
+    subjects: [
+      {name:"Matemáticas", note:78, prev:70},
+      {name:"Lenguaje", note:85, prev:84},
+      {name:"Física", note:62, prev:71},
+      {name:"Química", note:90, prev:81},
+      {name:"Historia", note:88, prev:87},
+      {name:"Inglés", note:95, prev:89},
+      {name:"Educación Física", note:100, prev:100},
+      {name:"Biología", note:73, prev:79}
+    ],
+    exams: [
+      {subject:"Física", topic:"Cinemática", date:"Jue 6 ago"},
+      {subject:"Inglés", topic:"Unit test 4", date:"Mar 11 ago"}
+    ],
+    tasks: [
+      {text:"Ensayo de Historia — entrega viernes"},
+      {text:"Práctica de laboratorio de Química — entrega lunes"}
+    ]
+  },
+  diego: {
+    name: "Diego Alejandro Vargas",
+    grade: "2do de Secundaria · Turno mañana",
+    initials: "DV",
+    attendance: 89,
+    subjects: [
+      {name:"Matemáticas", note:55, prev:64},
+      {name:"Lenguaje", note:68, prev:67},
+      {name:"Física", note:80, prev:74},
+      {name:"Química", note:74, prev:74},
+      {name:"Historia", note:60, prev:69},
+      {name:"Inglés", note:88, prev:80},
+      {name:"Educación Física", note:95, prev:95},
+      {name:"Biología", note:66, prev:60}
+    ],
+    exams: [
+      {subject:"Historia", topic:"Independencia", date:"Mié 5 ago"},
+      {subject:"Matemáticas", topic:"Ecuaciones lineales", date:"Vie 7 ago"}
+    ],
+    tasks: [
+      {text:"Guía de repaso de ecuaciones — Matemáticas"},
+      {text:"Lectura del capítulo 4 — Lenguaje"}
+    ]
+  },
+
+Sheila: {
+    name: "Sheila Condori Colque",
+    grade: "6to de Secundaria · Turno mañana",
+    initials: "DV",
+    attendance: 90,
+    subjects: [
+      {name:"Matemáticas", note:55, prev:64},
+      {name:"Lenguaje", note:68, prev:67},
+      {name:"Física", note:80, prev:74},
+      {name:"Química", note:74, prev:74},
+      {name:"Historia", note:60, prev:69},
+      {name:"Inglés", note:88, prev:80},
+      {name:"Educación Física", note:95, prev:95},
+      {name:"Biología", note:66, prev:60}
+    ],
+    exams: [
+      {subject:"Historia", topic:"Independencia", date:"Mié 5 ago"},
+      {subject:"Matemáticas", topic:"Ecuaciones lineales", date:"Vie 7 ago"}
+    ],
+    tasks: [
+      {text:"Guía de repaso de ecuaciones — Matemáticas"},
+      {text:"Lectura del capítulo 4 — Lenguaje"}
+    ]
+  }
+  };
+
+let current = "ana";
+
+/* ---------------- HELPERS ---------------- */
+function normalize(str){
+  return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+}
+function noteColor(note){
+  if(note>=80) return "var(--green)";
+  if(note>=51) return "var(--mustard-dark)";
+  return "var(--coral)";
+}
+function trendInfo(note, prev){
+  const diff = note - prev;
+  if(diff > 1) return {cls:"up", label:"▲ subió "+diff.toFixed(0)+" pts", tri:"var(--green)"};
+  if(diff < -1) return {cls:"down", label:"▼ bajó "+Math.abs(diff).toFixed(0)+" pts", tri:"var(--coral)"};
+  return {cls:"flat", label:"▬ estable", tri:"var(--ink-soft)"};
+}
+function average(student){
+  const s = student.subjects.reduce((a,b)=>a+b.note,0);
+  return (s/student.subjects.length);
+}
+function findSubject(student, text){
+  return student.subjects.find(s => normalize(text).includes(normalize(s.name)));
+}
+
+/* ---------------- RENDER SIDEBAR ---------------- */
+function renderSidebar(){
+  const s = students[current];
+  document.getElementById("avatarInit").textContent = s.initials;
+  document.getElementById("profileName").textContent = s.name;
+  document.getElementById("profileGrade").textContent = s.grade;
+  const avg = average(s);
+  const avgEl = document.getElementById("avgStat");
+  avgEl.textContent = avg.toFixed(1);
+  avgEl.className = "stat-num " + (avg>=70 ? "good":"warn");
+  const attEl = document.getElementById("attStat");
+  attEl.textContent = s.attendance+"%";
+  attEl.className = "stat-num " + (s.attendance>=90 ? "good":"warn");
+
+  const list = document.getElementById("subjectList");
+  list.innerHTML = s.subjects.map(sub => `
+    <div class="subject-row">
+      <div class="subject-name">${sub.name}</div>
+      <div class="subject-bar-track"><div class="subject-bar-fill" style="width:${sub.note}%;background:${noteColor(sub.note)}"></div></div>
+      <div class="subject-note" style="color:${noteColor(sub.note)}">${sub.note}</div>
+    </div>
+  `).join("");
+}
+
+/* ---------------- FICHA (grade card) ---------------- */
+function fichaSubject(sub){
+  const t = trendInfo(sub.note, sub.prev);
+  return `
+  <div class="ficha">
+    <div class="ficha-corner" style="border-color:${noteColor(sub.note)} transparent transparent transparent"></div>
+    <div class="ficha-body">
+      <div class="ficha-subject">${sub.name}</div>
+      <div class="ficha-meta">Última evaluación registrada</div>
+      <div class="ficha-grade-row">
+        <div class="ficha-grade" style="color:${noteColor(sub.note)}">${sub.note}</div>
+        <div class="ficha-trend ${t.cls}">${t.label}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function fichaResumen(student){
+  const avg = average(student);
+  const rows = student.subjects.map(sub => `
+    <div class="mini-item">
+      <div class="mi-dot" style="background:${noteColor(sub.note)}"></div>
+      <div class="mi-name">${sub.name}</div>
+      <div class="mi-note" style="color:${noteColor(sub.note)}">${sub.note}</div>
+    </div>`).join("");
+  return `
+  <div class="ficha">
+    <div class="ficha-body">
+      <div class="ficha-subject">Promedio general: <span style="color:${noteColor(avg)}">${avg.toFixed(1)}</span></div>
+      <div class="ficha-meta">${student.subjects.length} materias registradas este trimestre</div>
+      <div class="mini-list">${rows}</div>
+    </div>
+  </div>`;
+}
+
+function fichaExamenes(student){
+  const rows = student.exams.map(e => `
+    <div class="ticket">
+      <div class="ticket-date"><span class="d">${e.date.split(" ")[1]}</span>${e.date.split(" ")[0]}</div>
+      <div class="ticket-info">
+        <div class="t-subject">${e.subject}</div>
+        <div class="t-topic">${e.topic}</div>
+      </div>
+    </div>`).join("");
+  return `
+  <div class="ficha">
+    <div class="ficha-body">
+      <div class="ficha-subject">Próximos exámenes</div>
+      ${rows}
+    </div>
+  </div>`;
+}
+
+function fichaTareas(student){
+  const rows = student.tasks.map(t => `
+    <div class="task-item"><div class="task-check"></div><div>${t.text}</div></div>`).join("");
+  return `
+  <div class="ficha">
+    <div class="ficha-body">
+      <div class="ficha-subject">Pendientes</div>
+      ${rows}
+    </div>
+  </div>`;
+}
+
+function fichaAsistencia(student){
+  return `
+  <div class="ficha">
+    <div class="ficha-body">
+      <div class="ficha-subject">Asistencia del trimestre</div>
+      <div class="ficha-grade-row">
+        <div class="ficha-grade" style="color:${student.attendance>=90?'var(--green)':'var(--coral)'}">${student.attendance}%</div>
+        <div class="ficha-trend flat">de clases asistidas</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---------------- CHAT LOGIC ---------------- */
+const suggestionSets = {
+  default: ["¿Cuál es mi promedio?", "¿Cuándo es mi próximo examen?", "¿Cómo voy en Matemáticas?", "¿Cuál es mi asistencia?"],
+  afterAvg: ["¿Qué materia debo reforzar?", "¿Tengo tareas pendientes?", "¿Próximos exámenes?"],
+  afterSubject: ["¿Cuál es mi promedio general?", "¿Tengo exámenes pronto?"],
+};
+
+function renderChips(list){
+  const row = document.getElementById("chipsRow");
+  row.innerHTML = list.map(q => `<div class="chip" onclick="askChip(this)">${q}</div>`).join("");
+}
+function askChip(el){
+  document.getElementById("userInput").value = el.textContent;
+  sendMessage();
+}
+
+function addMessage(role, html, plain){
+  const wrap = document.getElementById("messages");
+  const el = document.createElement("div");
+  el.className = "msg " + role;
+  const now = new Date();
+  const time = now.getHours().toString().padStart(2,"0")+":"+now.getMinutes().toString().padStart(2,"0");
+  el.innerHTML = `<div class="bubble">${html}</div><div class="msg-time">${time}</div>`;
+  wrap.appendChild(el);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function botReply(text){
+  const student = students[current];
+  const q = normalize(text);
+
+  // greeting
+  if(/^(hola|buenas|buenos dias|buenas tardes|hey)/.test(q)){
+    addMessage("bot", `¡Hola, ${student.name.split(" ")[0]}! Puedo ayudarte con tus notas, exámenes, tareas y asistencia. ¿Qué necesitas saber?`);
+    renderChips(suggestionSets.default);
+    return;
+  }
+
+  // specific subject
+  const sub = findSubject(student, text);
+  if(sub){
+    addMessage("bot", `Esto es lo que tengo registrado en <strong>${sub.name}</strong>:` + fichaSubject(sub));
+    renderChips(suggestionSets.afterSubject);
+    return;
+  }
+
+  // average / general report
+  if(/promedio|boletin|informe|como voy en general|resumen/.test(q)){
+    addMessage("bot", "Aquí está tu resumen de notas por materia:" + fichaResumen(student));
+    renderChips(suggestionSets.afterAvg);
+    return;
+  }
+
+  // exams
+  if(/examen|evaluacion|prueba/.test(q)){
+    if(student.exams.length===0){
+      addMessage("bot","No tienes exámenes programados por el momento. 🎉");
+    } else {
+      addMessage("bot", "Estos son tus próximos exámenes:" + fichaExamenes(student));
+    }
+    renderChips(suggestionSets.default);
+    return;
+  }
+
+  // tasks
+  if(/tarea|pendiente|deber/.test(q)){
+    if(student.tasks.length===0){
+      addMessage("bot","No tienes tareas pendientes registradas. ¡Buen trabajo!");
+    } else {
+      addMessage("bot", "Tienes lo siguiente pendiente:" + fichaTareas(student));
+    }
+    renderChips(suggestionSets.default);
+    return;
+  }
+
+  // attendance
+  if(/asistencia|falta|inasistencia/.test(q)){
+    addMessage("bot", "Este es tu registro de asistencia:" + fichaAsistencia(student));
+    renderChips(suggestionSets.default);
+    return;
+  }
+
+  // which subject to improve
+  if(/reforzar|mejorar|debil|bajo rendimiento/.test(q)){
+    const weakest = [...student.subjects].sort((a,b)=>a.note-b.note)[0];
+    addMessage("bot", `La materia que más necesita refuerzo ahora es <strong>${weakest.name}</strong>:` + fichaSubject(weakest));
+    renderChips(suggestionSets.afterSubject);
+    return;
+  }
+
+  // thanks
+  if(/gracias/.test(q)){
+    addMessage("bot", "¡Con gusto! Si tienes otra pregunta sobre tus notas, aquí estoy.");
+    renderChips(suggestionSets.default);
+    return;
+  }
+
+  // fallback
+  addMessage("bot", "No estoy seguro de haber entendido eso. Puedo ayudarte con tu promedio, notas por materia, próximos exámenes, tareas pendientes o asistencia. ¿Sobre cuál te gustaría saber?");
+  renderChips(suggestionSets.default);
+}
+
+function sendMessage(){
+  const input = document.getElementById("userInput");
+  const text = input.value.trim();
+  if(!text) return;
+  addMessage("user", text);
+  input.value = "";
+  setTimeout(()=>botReply(text), 350);
+}
+
+/* ---------------- STUDENT SWITCH ---------------- */
+function switchStudent(id){
+  current = id;
+  renderSidebar();
+  document.getElementById("messages").innerHTML = "";
+  const s = students[current];
+  addMessage("bot", `Hola, cambié a la cuenta de <strong>${s.name}</strong>. ¿Qué te gustaría consultar?`);
+  renderChips(suggestionSets.default);
+}
+
+/* ---------------- INIT ---------------- */
+renderSidebar();
+addMessage("bot", `¡Hola! Soy el asistente virtual de notas de <strong>${students[current].name.split(" ")[0]}</strong>. Puedo responder sobre promedios, notas por materia, exámenes, tareas y asistencia.`);
+renderChips(suggestionSets.default);
+</script>
+</body>
+</html>
